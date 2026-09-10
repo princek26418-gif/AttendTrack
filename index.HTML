@@ -1,0 +1,1549 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AttendTrack - College Attendance</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    margin:0;
+    background:#f4f6fb;
+    color:#222;
+}
+
+header{
+    background:#263238;
+    color:white;
+    padding:20px;
+    text-align:center;
+}
+
+header h1{
+    margin:0;
+    font-size:28px;
+}
+
+header p{
+    margin:7px 0 0;
+    color:#ddd;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    background:white;
+    padding:18px;
+    margin-bottom:18px;
+    border-radius:14px;
+    box-shadow:0 3px 12px rgba(0,0,0,.08);
+}
+
+h2{
+    margin-top:0;
+}
+
+input,select,button{
+    width:100%;
+    padding:11px;
+    margin:6px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:15px;
+}
+
+button{
+    border:none;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.primary{
+    background:#37474f;
+    color:white;
+}
+
+.present-btn{
+    background:#4caf50;
+    color:white;
+}
+
+.absent-btn{
+    background:#e53935;
+    color:white;
+}
+
+.leave-btn{
+    background:#fbc02d;
+    color:#222;
+}
+
+.event-btn{
+    background:#ec407a;
+    color:white;
+}
+
+.cancel{
+    background:#777;
+    color:white;
+}
+
+.hidden{
+    display:none;
+}
+
+.subject-list{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+}
+
+.subject{
+    padding:8px 12px;
+    background:#e8eaf6;
+    border-radius:20px;
+    cursor:pointer;
+}
+
+.subject.selected{
+    background:#3949ab;
+    color:white;
+}
+
+.selected-info{
+    padding:10px;
+    background:#eef2ff;
+    border-radius:8px;
+    margin:10px 0;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:10px;
+}
+
+.stat{
+    background:#f5f5f5;
+    padding:15px;
+    text-align:center;
+    border-radius:10px;
+}
+
+.stat strong{
+    display:block;
+    font-size:24px;
+}
+
+.attendance-good{
+    color:#2e7d32;
+    font-weight:bold;
+}
+
+.attendance-bad{
+    color:#c62828;
+    font-weight:bold;
+}
+
+.confirm-box{
+    background:#fff3cd;
+    border:1px solid #ffca28;
+    padding:15px;
+    border-radius:10px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:650px;
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+th,td{
+    padding:10px;
+    border-bottom:1px solid #ddd;
+    text-align:center;
+}
+
+th{
+    background:#37474f;
+    color:white;
+}
+
+.status-present{
+    color:#2e7d32;
+    font-weight:bold;
+}
+
+.status-absent{
+    color:#c62828;
+    font-weight:bold;
+}
+
+.status-leave{
+    color:#b88600;
+    font-weight:bold;
+}
+
+.status-event{
+    color:#d81b60;
+    font-weight:bold;
+}
+
+.delete-btn{
+    background:#e53935;
+    color:white;
+    padding:7px;
+}
+
+.calendar{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+}
+
+.month{
+    border:1px solid #ddd;
+    border-radius:10px;
+    overflow:hidden;
+}
+
+.month-title{
+    background:#37474f;
+    color:white;
+    text-align:center;
+    padding:8px;
+    font-weight:bold;
+}
+
+.weekdays,.days{
+    display:grid;
+    grid-template-columns:repeat(7,1fr);
+}
+
+.weekdays div{
+    font-size:11px;
+    text-align:center;
+    padding:5px;
+    font-weight:bold;
+}
+
+.day{
+    min-height:42px;
+    padding:5px;
+    margin:1px;
+    border-radius:5px;
+    text-align:center;
+    font-size:12px;
+    background:#fafafa;
+}
+
+.no-class{
+    background:#fafafa;
+}
+
+.present-day{
+    background:#66bb6a !important;
+    color:white;
+    font-weight:bold;
+}
+
+.absent-day{
+    background:#ef5350 !important;
+    color:white;
+    font-weight:bold;
+}
+
+.leave-day{
+    background:#fdd835 !important;
+    color:#222;
+    font-weight:bold;
+}
+
+.sunday-day{
+    background:#e53935 !important;
+    color:white;
+    font-weight:bold;
+}
+
+.event-day{
+    background:#ec407a !important;
+    color:white;
+    font-weight:bold;
+}
+
+.legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:12px 0;
+}
+
+.legend-item{
+    padding:8px 12px;
+    border-radius:8px;
+    font-size:13px;
+    font-weight:bold;
+}
+
+.legend-present{
+    background:#66bb6a;
+    color:white;
+}
+
+.legend-absent{
+    background:#ef5350;
+    color:white;
+}
+
+.legend-leave{
+    background:#fdd835;
+}
+
+.legend-sunday{
+    background:#e53935;
+    color:white;
+}
+
+.legend-event{
+    background:#ec407a;
+    color:white;
+}
+
+.logout{
+    background:#ef5350;
+    color:white;
+}
+
+.profile{
+    background:#eceff1;
+    padding:12px;
+    border-radius:10px;
+    line-height:1.7;
+}
+
+@media(max-width:750px){
+    .calendar{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr;
+    }
+
+    header h1{
+        font-size:23px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<header>
+    <h1>AttendTrack</h1>
+    <p>College Student Attendance Tracker</p>
+</header>
+
+<div class="container">
+
+<!-- LOGIN -->
+<div class="card" id="loginCard">
+    <h2>Student Login</h2>
+
+    <input type="text" id="loginName" placeholder="Enter your name">
+
+    <input type="password" id="loginPassword" placeholder="Enter password">
+
+    <button class="primary" onclick="login()">Login</button>
+
+    <button onclick="showSignup()">Create New Account</button>
+
+    <p id="loginMessage"></p>
+</div>
+
+<!-- SIGNUP -->
+<div class="card hidden" id="signupCard">
+    <h2>Create Student Account</h2>
+
+    <input type="text" id="signupName" placeholder="Student Name">
+
+    <input type="password" id="signupPassword" placeholder="Create Password">
+
+    <input type="text" id="signupBranch" placeholder="Branch (e.g. CSE, ECE, BBA...)">
+
+    <input type="text" id="signupDepartment" placeholder="Department">
+
+    <button class="primary" onclick="createAccount()">
+        Create Account
+    </button>
+
+    <button onclick="showLogin()">Back to Login</button>
+
+    <p id="signupMessage"></p>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+
+    <div class="card">
+        <h2>Student Profile</h2>
+
+        <div class="profile">
+            <b>Name:</b> <span id="profileName"></span><br>
+            <b>Branch:</b> <span id="profileBranch"></span><br>
+            <b>Department:</b> <span id="profileDepartment"></span>
+        </div>
+
+        <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- SUBJECT -->
+    <div class="card">
+        <h2>My Subjects</h2>
+
+        <input type="text" id="subjectInput"
+               placeholder="Enter your subject name">
+
+        <button class="primary" onclick="addSubject()">
+            + Add Subject
+        </button>
+
+        <div class="subject-list" id="subjectList"></div>
+
+        <div class="selected-info">
+            Selected Subject:
+            <b id="selectedSubject">None</b>
+        </div>
+    </div>
+
+    <!-- ATTENDANCE -->
+    <div class="card">
+        <h2>Mark Today's Attendance</h2>
+
+        <p>
+            Date: <b id="todayDate"></b><br>
+            Day: <b id="todayDay"></b><br>
+            Time: <b id="todayTime"></b>
+        </p>
+
+        <button class="present-btn" onclick="startConfirmation('Present')">
+            Present
+        </button>
+
+        <button class="absent-btn" onclick="startConfirmation('Absent')">
+            Absent
+        </button>
+
+        <div id="confirmBox" class="confirm-box hidden">
+            <h3>Confirm Attendance</h3>
+
+            <p id="confirmText"></p>
+
+            <p>
+                Confirm within:
+                <b><span id="countdown">10</span> seconds</b>
+            </p>
+
+            <button class="primary" onclick="confirmAttendance()">
+                Confirm Attendance
+            </button>
+
+            <button class="cancel" onclick="cancelConfirmation()">
+                Cancel
+            </button>
+        </div>
+
+        <p id="lockMessage"></p>
+    </div>
+
+    <!-- LEAVE -->
+    <div class="card">
+        <h2>Student Leave</h2>
+
+        <button class="leave-btn" onclick="openLeave()">
+            🟡 Add Leave
+        </button>
+
+        <div id="leaveBox" class="hidden">
+            <input type="date" id="leaveDate">
+
+            <input type="text" id="leaveReason"
+                   placeholder="Leave reason">
+
+            <button class="leave-btn" onclick="saveLeave()">
+                Save Leave
+            </button>
+        </div>
+    </div>
+
+    <!-- EVENT -->
+    <div class="card">
+        <h2>Festival / Event</h2>
+
+        <button class="event-btn" onclick="openEvent()">
+            🩷 Add Festival / Event
+        </button>
+
+        <div id="eventBox" class="hidden">
+            <input type="date" id="eventDate">
+
+            <input type="text" id="eventName"
+                   placeholder="Festival / Event name">
+
+            <button class="event-btn" onclick="saveEvent()">
+                Save Event
+            </button>
+        </div>
+    </div>
+
+    <!-- OVERALL -->
+    <div class="card">
+        <h2>Overall Attendance</h2>
+
+        <h1 id="overallPercentage">0%</h1>
+
+        <p id="overallStatus"></p>
+
+        <div class="stats">
+            <div class="stat">
+                <strong id="totalClasses">0</strong>
+                Total Classes
+            </div>
+
+            <div class="stat">
+                <strong id="presentClasses">0</strong>
+                Present
+            </div>
+
+            <div class="stat">
+                <strong id="absentClasses">0</strong>
+                Absent
+            </div>
+        </div>
+    </div>
+
+    <!-- SUBJECT TABLE -->
+    <div class="card">
+        <h2>Subject-wise Attendance</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Subject</th>
+                        <th>Total</th>
+                        <th>Present</th>
+                        <th>Absent</th>
+                        <th>Attendance %</th>
+                    </tr>
+                </thead>
+
+                <tbody id="subjectTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- HISTORY -->
+    <div class="card">
+        <h2>Attendance History</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Time</th>
+                        <th>Subject</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="historyTable"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- SPECIAL HISTORY -->
+    <div class="card">
+        <h2>Leave / Festival History</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Type</th>
+                        <th>Name / Reason</th>
+                    </tr>
+                </thead>
+
+                <tbody id="specialHistory"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- CALENDAR -->
+    <div class="card">
+        <h2>Year Attendance Calendar</h2>
+
+        <select id="yearSelect" onchange="showYearCalendar()"></select>
+
+        <div class="legend">
+            <div class="legend-item legend-present">🟢 Present</div>
+            <div class="legend-item legend-absent">🔴 Absent</div>
+            <div class="legend-item legend-leave">🟡 Leave</div>
+            <div class="legend-item legend-sunday">🔴 Sunday / Holiday</div>
+            <div class="legend-item legend-event">🩷 Festival / Event</div>
+        </div>
+
+        <div class="calendar" id="calendar"></div>
+    </div>
+
+</div>
+
+</div>
+
+<script>
+
+/* =========================
+   ACCOUNT SYSTEM
+========================= */
+
+let account = JSON.parse(localStorage.getItem("attendTrackAccount"));
+
+let currentUser = null;
+
+let subjects = [];
+let attendance = [];
+let specialDays = [];
+
+let selectedSubject = "";
+let pendingStatus = "";
+let countdownTimer = null;
+
+
+/* =========================
+   LOGIN / SIGNUP
+========================= */
+
+function showSignup(){
+    document.getElementById("loginCard").classList.add("hidden");
+    document.getElementById("signupCard").classList.remove("hidden");
+}
+
+function showLogin(){
+    document.getElementById("signupCard").classList.add("hidden");
+    document.getElementById("loginCard").classList.remove("hidden");
+}
+
+function createAccount(){
+
+    const name =
+        document.getElementById("signupName").value.trim();
+
+    const password =
+        document.getElementById("signupPassword").value;
+
+    const branch =
+        document.getElementById("signupBranch").value.trim();
+
+    const department =
+        document.getElementById("signupDepartment").value.trim();
+
+    if(!name || !password || !branch || !department){
+        document.getElementById("signupMessage").innerText =
+            "Please fill all details.";
+        return;
+    }
+
+    account = {
+        name:name,
+        password:password,
+        branch:branch,
+        department:department
+    };
+
+    localStorage.setItem(
+        "attendTrackAccount",
+        JSON.stringify(account)
+    );
+
+    alert("Account created successfully!");
+
+    showLogin();
+}
+
+function login(){
+
+    const name =
+        document.getElementById("loginName").value.trim();
+
+    const password =
+        document.getElementById("loginPassword").value;
+
+    if(!account){
+        document.getElementById("loginMessage").innerText =
+            "No account found. Please create an account.";
+        return;
+    }
+
+    if(name === account.name && password === account.password){
+
+        currentUser = account;
+
+        loadUserData();
+
+        document.getElementById("loginCard").classList.add("hidden");
+        document.getElementById("signupCard").classList.add("hidden");
+        document.getElementById("app").classList.remove("hidden");
+
+        document.getElementById("profileName").innerText =
+            account.name;
+
+        document.getElementById("profileBranch").innerText =
+            account.branch;
+
+        document.getElementById("profileDepartment").innerText =
+            account.department;
+
+        updateToday();
+        showSubjects();
+        updateOverall();
+        updateSubjectTable();
+        updateHistory();
+        updateSpecialHistory();
+        setupYears();
+        showYearCalendar();
+
+    }else{
+
+        document.getElementById("loginMessage").innerText =
+            "Wrong name or password.";
+    }
+}
+
+function logout(){
+
+    currentUser = null;
+
+    document.getElementById("app").classList.add("hidden");
+    document.getElementById("loginCard").classList.remove("hidden");
+}
+
+
+/* =========================
+   USER DATA
+========================= */
+
+function loadUserData(){
+
+    subjects = JSON.parse(
+        localStorage.getItem("subjects_"+account.name) || "[]"
+    );
+
+    attendance = JSON.parse(
+        localStorage.getItem("attendance_"+account.name) || "[]"
+    );
+
+    specialDays = JSON.parse(
+        localStorage.getItem("specialDays_"+account.name) || "[]"
+    );
+}
+
+function saveUserData(){
+
+    localStorage.setItem(
+        "subjects_"+account.name,
+        JSON.stringify(subjects)
+    );
+
+    localStorage.setItem(
+        "attendance_"+account.name,
+        JSON.stringify(attendance)
+    );
+
+    localStorage.setItem(
+        "specialDays_"+account.name,
+        JSON.stringify(specialDays)
+    );
+}
+
+
+/* =========================
+   DATE / TIME
+========================= */
+
+function formatDate(date){
+
+    const y = date.getFullYear();
+
+    const m = String(date.getMonth()+1).padStart(2,"0");
+
+    const d = String(date.getDate()).padStart(2,"0");
+
+    return `${y}-${m}-${d}`;
+}
+
+function updateToday(){
+
+    const now = new Date();
+
+    document.getElementById("todayDate").innerText =
+        now.toLocaleDateString();
+
+    document.getElementById("todayDay").innerText =
+        now.toLocaleDateString("en-US",{weekday:"long"});
+
+    document.getElementById("todayTime").innerText =
+        now.toLocaleTimeString();
+}
+
+setInterval(updateToday,1000);
+
+
+/* =========================
+   SUBJECTS
+========================= */
+
+function addSubject(){
+
+    const input =
+        document.getElementById("subjectInput");
+
+    const subject = input.value.trim();
+
+    if(!subject){
+        alert("Enter subject name.");
+        return;
+    }
+
+    if(subjects.includes(subject)){
+        alert("Subject already exists.");
+        return;
+    }
+
+    subjects.push(subject);
+
+    input.value="";
+
+    saveUserData();
+    showSubjects();
+}
+
+function showSubjects(){
+
+    const box =
+        document.getElementById("subjectList");
+
+    box.innerHTML="";
+
+    subjects.forEach(subject=>{
+
+        const div=document.createElement("div");
+
+        div.className="subject";
+
+        if(subject===selectedSubject){
+            div.classList.add("selected");
+        }
+
+        div.innerText=subject;
+
+        div.onclick=function(){
+
+            selectedSubject=subject;
+
+            document.getElementById("selectedSubject").innerText =
+                subject;
+
+            showSubjects();
+
+            checkTodayLock();
+        };
+
+        box.appendChild(div);
+    });
+}
+
+
+/* =========================
+   ATTENDANCE CONFIRMATION
+========================= */
+
+function startConfirmation(status){
+
+    if(!selectedSubject){
+
+        alert("First select a subject.");
+
+        return;
+    }
+
+    const today=formatDate(new Date());
+
+    const alreadyMarked=attendance.some(
+        x=>x.date===today &&
+           x.subject===selectedSubject
+    );
+
+    if(alreadyMarked){
+
+        alert("Attendance for this subject is already locked.");
+
+        return;
+    }
+
+    pendingStatus=status;
+
+    document.getElementById("confirmBox")
+        .classList.remove("hidden");
+
+    document.getElementById("confirmText").innerText =
+        `Subject: ${selectedSubject} | Status: ${status}`;
+
+    let seconds=10;
+
+    document.getElementById("countdown").innerText=seconds;
+
+    clearInterval(countdownTimer);
+
+    countdownTimer=setInterval(()=>{
+
+        seconds--;
+
+        document.getElementById("countdown").innerText=seconds;
+
+        if(seconds<=0){
+
+            clearInterval(countdownTimer);
+
+            cancelConfirmation();
+
+            alert("Confirmation time expired.");
+
+        }
+
+    },1000);
+}
+
+function confirmAttendance(){
+
+    clearInterval(countdownTimer);
+
+    const now=new Date();
+
+    const record={
+
+        id:Date.now(),
+
+        date:formatDate(now),
+
+        day:now.toLocaleDateString(
+            "en-US",
+            {weekday:"long"}
+        ),
+
+        time:now.toLocaleTimeString(),
+
+        subject:selectedSubject,
+
+        status:pendingStatus,
+
+        locked:true
+    };
+
+    attendance.push(record);
+
+    saveUserData();
+
+    document.getElementById("confirmBox")
+        .classList.add("hidden");
+
+    document.getElementById("lockMessage").innerText =
+        "Attendance confirmed and locked for this subject/date.";
+
+    updateOverall();
+    updateSubjectTable();
+    updateHistory();
+    showYearCalendar();
+}
+
+function cancelConfirmation(){
+
+    clearInterval(countdownTimer);
+
+    document.getElementById("confirmBox")
+        .classList.add("hidden");
+}
+
+function checkTodayLock(){
+
+    if(!selectedSubject)return;
+
+    const today=formatDate(new Date());
+
+    const record=attendance.find(
+        x=>x.date===today &&
+           x.subject===selectedSubject
+    );
+
+    if(record){
+
+        document.getElementById("lockMessage").innerText =
+            `Today's attendance is already locked as ${record.status}.`;
+
+    }else{
+
+        document.getElementById("lockMessage").innerText="";
+    }
+}
+
+
+/* =========================
+   LEAVE
+========================= */
+
+function openLeave(){
+
+    document.getElementById("leaveBox")
+        .classList.toggle("hidden");
+
+    document.getElementById("leaveDate").value =
+        formatDate(new Date());
+}
+
+function saveLeave(){
+
+    const date =
+        document.getElementById("leaveDate").value;
+
+    const reason =
+        document.getElementById("leaveReason").value.trim();
+
+    if(!date || !reason){
+
+        alert("Select date and enter leave reason.");
+
+        return;
+    }
+
+    const d=new Date(date+"T00:00:00");
+
+    if(d.getDay()===0){
+
+        alert("Sunday is already Holiday.");
+
+        return;
+    }
+
+    if(specialDays.some(x=>x.date===date)){
+
+        alert("This date already has a special day.");
+
+        return;
+    }
+
+    specialDays.push({
+
+        id:Date.now(),
+
+        date:date,
+
+        day:d.toLocaleDateString(
+            "en-US",
+            {weekday:"long"}
+        ),
+
+        type:"Leave",
+
+        name:"Student Leave",
+
+        reason:reason
+    });
+
+    saveUserData();
+
+    document.getElementById("leaveReason").value="";
+
+    document.getElementById("leaveBox")
+        .classList.add("hidden");
+
+    updateSpecialHistory();
+
+    showYearCalendar();
+}
+
+
+/* =========================
+   FESTIVAL / EVENT
+========================= */
+
+function openEvent(){
+
+    document.getElementById("eventBox")
+        .classList.toggle("hidden");
+
+    document.getElementById("eventDate").value =
+        formatDate(new Date());
+}
+
+function saveEvent(){
+
+    const date =
+        document.getElementById("eventDate").value;
+
+    const name =
+        document.getElementById("eventName").value.trim();
+
+    if(!date || !name){
+
+        alert("Select date and enter event name.");
+
+        return;
+    }
+
+    if(specialDays.some(x=>x.date===date)){
+
+        alert("This date already has a special day.");
+
+        return;
+    }
+
+    const d=new Date(date+"T00:00:00");
+
+    specialDays.push({
+
+        id:Date.now(),
+
+        date:date,
+
+        day:d.toLocaleDateString(
+            "en-US",
+            {weekday:"long"}
+        ),
+
+        type:"Event",
+
+        name:name,
+
+        reason:""
+    });
+
+    saveUserData();
+
+    document.getElementById("eventName").value="";
+
+    document.getElementById("eventBox")
+        .classList.add("hidden");
+
+    updateSpecialHistory();
+
+    showYearCalendar();
+}
+
+
+/* =========================
+   OVERALL ATTENDANCE
+========================= */
+
+function updateOverall(){
+
+    const total=attendance.length;
+
+    const present=attendance.filter(
+        x=>x.status==="Present"
+    ).length;
+
+    const absent=attendance.filter(
+        x=>x.status==="Absent"
+    ).length;
+
+    const percentage =
+        total===0 ? 0 : (present/total)*100;
+
+    document.getElementById("overallPercentage")
+        .innerText=percentage.toFixed(2)+"%";
+
+    document.getElementById("totalClasses")
+        .innerText=total;
+
+    document.getElementById("presentClasses")
+        .innerText=present;
+
+    document.getElementById("absentClasses")
+        .innerText=absent;
+
+    const status =
+        document.getElementById("overallStatus");
+
+    if(total===0){
+
+        status.innerText="No attendance marked yet.";
+        status.className="";
+
+    }else if(percentage>=75){
+
+        status.innerText="75%+ Attendance — Good";
+        status.className="attendance-good";
+
+    }else{
+
+        status.innerText="Below 75% — Attendance needs improvement";
+        status.className="attendance-bad";
+    }
+}
+
+
+/* =========================
+   SUBJECT TABLE
+========================= */
+
+function updateSubjectTable(){
+
+    const table=
+        document.getElementById("subjectTable");
+
+    table.innerHTML="";
+
+    subjects.forEach(subject=>{
+
+        const records=attendance.filter(
+            x=>x.subject===subject
+        );
+
+        const total=records.length;
+
+        const present=records.filter(
+            x=>x.status==="Present"
+        ).length;
+
+        const absent=records.filter(
+            x=>x.status==="Absent"
+        ).length;
+
+        const percent=
+            total===0 ? 0 : present/total*100;
+
+        table.innerHTML+=`
+        <tr>
+            <td>${subject}</td>
+            <td>${total}</td>
+            <td>${present}</td>
+            <td>${absent}</td>
+            <td>${percent.toFixed(2)}%</td>
+        </tr>`;
+    });
+}
+
+
+/* =========================
+   ATTENDANCE HISTORY
+========================= */
+
+function updateHistory(){
+
+    const table=
+        document.getElementById("historyTable");
+
+    table.innerHTML="";
+
+    [...attendance].reverse().forEach(record=>{
+
+        const cls=
+            record.status==="Present"
+            ? "status-present"
+            : "status-absent";
+
+        table.innerHTML+=`
+
+        <tr>
+
+            <td>${record.date}</td>
+
+            <td>${record.day}</td>
+
+            <td>${record.time}</td>
+
+            <td>${record.subject}</td>
+
+            <td class="${cls}">
+                ${record.status}
+                🔒
+            </td>
+
+            <td>
+                <button class="delete-btn"
+                    onclick="deleteRecord(${record.id})">
+                    Delete
+                </button>
+            </td>
+
+        </tr>`;
+    });
+}
+
+function deleteRecord(id){
+
+    const ok=confirm(
+        "Delete this attendance record?"
+    );
+
+    if(!ok)return;
+
+    attendance=attendance.filter(
+        x=>x.id!==id
+    );
+
+    saveUserData();
+
+    updateOverall();
+    updateSubjectTable();
+    updateHistory();
+    showYearCalendar();
+}
+
+
+/* =========================
+   SPECIAL HISTORY
+========================= */
+
+function updateSpecialHistory(){
+
+    const table=
+        document.getElementById("specialHistory");
+
+    table.innerHTML="";
+
+    [...specialDays].reverse().forEach(x=>{
+
+        const text=
+            x.type==="Leave"
+            ? x.reason
+            : x.name;
+
+        const cls=
+            x.type==="Leave"
+            ? "status-leave"
+            : "status-event";
+
+        table.innerHTML+=`
+
+        <tr>
+
+            <td>${x.date}</td>
+
+            <td>${x.day}</td>
+
+            <td class="${cls}">
+                ${x.type}
+            </td>
+
+            <td>${text}</td>
+
+        </tr>`;
+    });
+}
+
+
+/* =========================
+   YEAR CALENDAR
+========================= */
+
+function setupYears(){
+
+    const select=
+        document.getElementById("yearSelect");
+
+    select.innerHTML="";
+
+    const currentYear=
+        new Date().getFullYear();
+
+    for(let y=currentYear-2;y<=currentYear+3;y++){
+
+        const option=document.createElement("option");
+
+        option.value=y;
+
+        option.innerText=y;
+
+        if(y===currentYear){
+            option.selected=true;
+        }
+
+        select.appendChild(option);
+    }
+}
+
+function showYearCalendar(){
+
+    const year=
+        Number(document.getElementById("yearSelect").value);
+
+    const calendar=
+        document.getElementById("calendar");
+
+    calendar.innerHTML="";
+
+    for(let month=0;month<12;month++){
+
+        const monthBox=document.createElement("div");
+
+        monthBox.className="month";
+
+        const monthName=
+            new Date(year,month,1)
+            .toLocaleDateString(
+                "en-US",
+                {month:"long"}
+            );
+
+        monthBox.innerHTML=
+            `<div class="month-title">
+                ${monthName} ${year}
+            </div>`;
+
+        const weekdays=document.createElement("div");
+
+        weekdays.className="weekdays";
+
+        ["S","M","T","W","T","F","S"]
+        .forEach(day=>{
+
+            weekdays.innerHTML+=
+                `<div>${day}</div>`;
+        });
+
+        monthBox.appendChild(weekdays);
+
+        const days=document.createElement("div");
+
+        days.className="days";
+
+        const firstDay=
+            new Date(year,month,1).getDay();
+
+        const totalDays=
+            new Date(year,month+1,0).getDate();
+
+        for(let i=0;i<firstDay;i++){
+
+            days.innerHTML+=
+                `<div class="day"></div>`;
+        }
+
+        for(let d=1;d<=totalDays;d++){
+
+            const date=
+                `${year}-${String(month+1).padStart(2,"0")}-${String(d).padStart(2,"0")}`;
+
+            const dateObj=
+                new Date(year,month,d);
+
+            const dayBox=
+                document.createElement("div");
+
+            dayBox.className="day";
+
+            dayBox.innerText=d;
+
+            /*
+             PRIORITY:
+             Event > Leave > Sunday > Attendance
+            */
+
+            const event=
+                specialDays.find(
+                    x=>x.date===date &&
+                       x.type==="Event"
+                );
+
+            const leave=
+                specialDays.find(
+                    x=>x.date===date &&
+                       x.type==="Leave"
+                );
+
+            const record=
+                attendance.find(
+                    x=>x.date===date
+                );
+
+            if(event){
+
+                dayBox.classList.add("event-day");
+
+                dayBox.title=
+                    "Festival/Event: "+event.name;
+
+            }else if(leave){
+
+                dayBox.classList.add("leave-day");
+
+                dayBox.title=
+                    "Leave: "+leave.reason;
+
+            }else if(dateObj.getDay()===0){
+
+                dayBox.classList.add("sunday-day");
+
+                dayBox.title="Sunday / Holiday";
+
+            }else if(record){
+
+                if(record.status==="Present"){
+
+                    dayBox.classList.add("present-day");
+
+                    dayBox.title=
+                        "Present - "+record.subject;
+
+                }else{
+
+                    dayBox.classList.add("absent-day");
+
+                    dayBox.title=
+                        "Absent - "+record.subject;
+                }
+            }else{
+
+                dayBox.classList.add("no-class");
+            }
+
+            days.appendChild(dayBox);
+        }
+
+        monthBox.appendChild(days);
+
+        calendar.appendChild(monthBox);
+    }
+}
+
+
+/* =========================
+   START
+========================= */
+
+updateToday();
+
+</script>
+
+</body>
+</html>
